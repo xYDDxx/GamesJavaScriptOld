@@ -3,17 +3,13 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>PLay Lava Arcade</title>
+    <title>Play Lava Arcade</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
     <style type="text/css">
         body {
             margin: 0;
         }
     </style>
-</head>
-
-<body>
-
     <script type="text/javascript">
         var config = {
             type: Phaser.AUTO,
@@ -45,6 +41,7 @@
         var score = 0;
         var gameOver = false;
         var scoreText;
+        var html = "";
 
         var game = new Phaser.Game(config);
 
@@ -73,16 +70,16 @@
             lava2 = this.physics.add.staticGroup();
 
             //Ledges
-            platforms.create(60, 520, 'ground')
-            platforms.create(600, 568, 'ground')
+            platforms.create(60, 520, 'ground');
+            platforms.create(600, 568, 'ground');
             platforms.create(400, 110, 'ground');
-            platforms.create(1700, 568, 'ground')
             platforms.create(600, 400, 'ground');
             platforms.create(100, 250, 'ground');
             platforms.create(750, 220, 'ground');
-            platforms.create(1120, 450, 'ground');
-            platforms.create(1300, 300, 'ground');
+            platforms.create(1100, 450, 'ground');
+            platforms.create(1250, 300, 'ground');
             platforms.create(1200, 100, 'ground');
+            platforms.create(1400, 560, 'ground');
 
             //add lava
             lava.create(768, 790, 'lava').setScale(2.3).refreshBody();
@@ -92,7 +89,7 @@
             player = this.physics.add.sprite(100, 450, 'dude');
 
             //  Player physics properties. Give the little guy a slight bounce.
-            player.setBounce(0.2);
+            player.setBounce(0.3);
             player.setCollideWorldBounds(true);
 
             //  Our player animations, turning, walking left and walking right.
@@ -142,7 +139,7 @@
             stars.children.iterate(function(child) {
 
                 //  Give each star a slightly different bounce
-                child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.6));
+                child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
 
             });
 
@@ -172,9 +169,9 @@
         }
 
         function update() {
-            if (gameOver) {
 
-                return;
+            if (gameOver) {
+                gameoverscreen();
             }
 
             if (cursors.left.isDown) {
@@ -239,20 +236,39 @@
         }
 
         function hitlava(player, lava2) {
-            this.physics.pause();
 
             player.setTint(0xff0000);
 
             player.anims.play('turn');
 
             gameOver = true;
+
+            this.physics.pause();
         }
 
         function bomblava(bomb, lava2) {
             bomb.disableBody(true, true);
         }
-    </script>
 
+
+
+        function gameoverscreen() {
+            document.addEventListener("keydown", function(event) {
+                if (event.keyCode === 13) {
+                    location.reload();
+                }
+            });
+
+        };
+    </script>
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+
+    </div>
 </body>
 
 </html>
