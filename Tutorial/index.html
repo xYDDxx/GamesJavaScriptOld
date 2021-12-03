@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Making your first Phaser 3 Game - Part 10</title>
+    <title>PLay Lava Arcade</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
     <style type="text/css">
         body {
@@ -23,7 +23,7 @@
                 default: 'arcade',
                 arcade: {
                     gravity: {
-                        y: 280
+                        y: 800
                     },
                     debug: false
                 }
@@ -72,17 +72,16 @@
             lava = this.physics.add.staticGroup();
             lava2 = this.physics.add.staticGroup();
 
-            //  Here we create the ground.
-            //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-            platforms.create(-250, 568, 'ground').setScale(2).refreshBody();
-            platforms.create(700, 568, 'ground').setScale(2).refreshBody();
-            platforms.create(1700, 568, 'ground').setScale(2).refreshBody();
-
-            //  Now let's create some ledges
+            //Ledges
+            platforms.create(60, 520, 'ground')
+            platforms.create(600, 568, 'ground')
+            platforms.create(400, 110, 'ground');
+            platforms.create(1700, 568, 'ground')
             platforms.create(600, 400, 'ground');
-            platforms.create(120, 250, 'ground');
+            platforms.create(100, 250, 'ground');
             platforms.create(750, 220, 'ground');
-            platforms.create(1250, 300, 'ground');
+            platforms.create(1120, 450, 'ground');
+            platforms.create(1300, 300, 'ground');
             platforms.create(1200, 100, 'ground');
 
             //add lava
@@ -132,7 +131,7 @@
             //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
             stars = this.physics.add.group({
                 key: 'star',
-                repeat: 21,
+                repeat: 0,
                 setXY: {
                     x: 12,
                     y: 0,
@@ -168,6 +167,8 @@
             this.physics.add.collider(player, bombs, hitBomb, null, this);
 
             this.physics.add.collider(player, lava2, hitlava, null, this);
+
+            this.physics.add.collider(bombs, lava2, bomblava, null, this);
         }
 
         function update() {
@@ -177,11 +178,11 @@
             }
 
             if (cursors.left.isDown) {
-                player.setVelocityX(-160);
+                player.setVelocityX(-200);
 
                 player.anims.play('left', true);
             } else if (cursors.right.isDown) {
-                player.setVelocityX(160);
+                player.setVelocityX(200);
 
                 player.anims.play('right', true);
             } else {
@@ -191,7 +192,7 @@
             }
 
             if (cursors.up.isDown && player.body.touching.down) {
-                player.setVelocityY(-330);
+                player.setVelocityY(-550);
             }
         }
 
@@ -203,24 +204,29 @@
             scoreText.setText('Score: ' + score);
 
             if (stars.countActive(true) === 0) {
-                //  A new batch of stars to collect
-                stars.children.iterate(function(child) {
-
-                    child.enableBody(true, child.x, 0, true, true);
-
-                });
-
-                var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-
-                var bomb = bombs.create(x, 50, 'bomb');
-
-                bomb.setBounce(1);
-                bomb.setCollideWorldBounds(true);
-                bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-                bomb.allowGravity = false;
-
+                for (i = 0; i <= 1; i++) {
+                    bomb();
+                }
             }
+
         }
+
+        function bomb() { //  A new batch of stars to collect
+            stars.children.iterate(function(child) {
+
+                child.enableBody(true, child.x, 0, true, true);
+
+            });
+
+            var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+
+            var bomb = bombs.create(x, 50, 'bomb');
+
+            bomb.setBounce(1);
+            bomb.setCollideWorldBounds(true);
+            bomb.setVelocity(Phaser.Math.Between(-100, 400), 20);
+            bomb.allowGravity = false;
+        };
 
         function hitBomb(player, bomb) {
             this.physics.pause();
@@ -240,6 +246,10 @@
             player.anims.play('turn');
 
             gameOver = true;
+        }
+
+        function bomblava(bomb, lava2) {
+            bomb.disableBody(true, true);
         }
     </script>
 
